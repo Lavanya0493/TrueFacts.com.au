@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TrueFacts — Ask Anything, Get Real Answers</title>
+  <meta name="description" content="Ask any question and get accurate, AI-powered answers instantly. TrueFacts is your trusted source for facts, explanations and knowledge."/>
+  <meta name="keywords" content="facts, answers, ask questions, AI answers, true facts, knowledge, explanations"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0F1E2E;
+      --navy-mid: #162638;
+      --navy-light: #1E3348;
+      --blue: #1A6FD4;
+      --blue-light: #3D8EF0;
+      --gold: #F0A500;
+      --white: #F8FAFC;
+      --cream: #F0F4F8;
+      --ink: #0A1628;
+      --muted: #5A7A9A;
+      --soft: #8AA0B8;
+      --border: #D0DCE8;
+      --green: #10B981;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Source Sans 3', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--navy);
+      padding: 0 2.5rem;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid var(--gold);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-size: 1.4rem;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+    .logo span { color: var(--gold); }
+    .nav-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; color: var(--soft);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--navy);
+      padding: 4rem 2.5rem 5rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(26,111,212,0.08) 1px, transparent 1px);
+      background-size: 35px 35px;
+      pointer-events: none;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(26,111,212,0.15) 0%, transparent 70%);
+      top: 0; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; font-weight: 500;
+      color: var(--gold); letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 1.25rem;
+      position: relative; z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: var(--white); line-height: 1.05;
+      letter-spacing: -0.02em; margin-bottom: 1rem;
+      position: relative; z-index: 1;
+    }
+    h1 em { font-style: italic; color: var(--gold); }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--soft);
+      max-width: 520px; margin: 0 auto 2.5rem;
+      line-height: 1.7; position: relative; z-index: 1;
+    }
+
+    /* SEARCH BOX */
+    .search-wrap {
+      max-width: 720px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+
+    .search-box {
+      display: flex;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      transition: border-color 0.2s;
+    }
+    .search-box:focus-within { border-color: var(--blue-light); }
+
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none; outline: none;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem; font-weight: 500;
+      color: var(--ink);
+      padding: 1.1rem 1.5rem;
+    }
+    .search-input::placeholder { color: var(--muted); }
+
+    .search-btn {
+      background: var(--blue);
+      color: white;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      padding: 0 2rem; border: none; cursor: pointer;
+      transition: background 0.2s; white-space: nowrap;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .search-btn:hover { background: var(--blue-light); }
+    .search-btn:disabled { background: var(--muted); cursor: not-allowed; }
+
+    .suggestions {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      justify-content: center; margin-top: 1.25rem;
+      position: relative; z-index: 1;
+    }
+    .suggestion-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--soft);
+      font-size: 0.78rem; font-weight: 500;
+      padding: 0.35rem 0.9rem; border-radius: 100px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .suggestion-pill:hover {
+      background: rgba(26,111,212,0.2);
+      border-color: rgba(26,111,212,0.4);
+      color: var(--white);
+    }
+
+    /* ANSWER AREA */
+    .answer-section {
+      max-width: 800px; margin: 3rem auto;
+      padding: 0 2rem;
+      display: none;
+    }
+    .answer-section.visible { display: block; }
+
+    .answer-card {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .answer-header {
+      background: var(--navy);
+      padding: 1.25rem 1.75rem;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 1rem;
+    }
+    .answer-question {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.15rem;
+      color: var(--white); line-height: 1.3; flex: 1;
+    }
+    .answer-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 500;
+      color: var(--gold); letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(240,165,0,0.1);
+      border: 1px solid rgba(240,165,0,0.25);
+      padding: 0.25rem 0.6rem; white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .answer-body {
+      padding: 2rem 1.75rem;
+    }
+
+    .answer-text {
+      font-size: 1rem; line-height: 1.85;
+      color: var(--ink);
+    }
+    .answer-text p { margin-bottom: 1rem; }
+    .answer-text p:last-child { margin-bottom: 0; }
+    .answer-text strong { color: var(--navy); font-weight: 700; }
+    .answer-text ul, .answer-text ol {
+      margin: 0.75rem 0 1rem 1.5rem;
+    }
+    .answer-text li { margin-bottom: 0.4rem; }
+
+    /* LOADING */
+    .loading-wrap {
+      padding: 2.5rem 1.75rem;
+      text-align: center; display: none;
+    }
+    .loading-wrap.visible { display: block; }
+    .loading-dots {
+      display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .dot {
+      width: 8px; height: 8px; background: var(--blue);
+      border-radius: 50%; animation: bounce 1.2s ease infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-12px)} }
+    .loading-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .answer-footer {
+      padding: 1rem 1.75rem;
+      border-top: 1px solid var(--border);
+      background: var(--cream);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 0.75rem;
+    }
+    .answer-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .ask-again-btn {
+      background: var(--blue); color: white;
+      font-size: 0.8rem; font-weight: 600;
+      padding: 0.5rem 1.25rem; border: none; cursor: pointer;
+      border-radius: 4px; transition: background 0.2s;
+    }
+    .ask-again-btn:hover { background: var(--blue-light); }
+
+    /* POPULAR QUESTIONS */
+    .popular {
+      max-width: 800px; margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .popular-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.3rem;
+      color: var(--ink); margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--navy);
+    }
+    .popular-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .popular-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 0.75rem;
+    }
+    .popular-item:hover {
+      border-color: var(--blue);
+      box-shadow: 0 4px 15px rgba(26,111,212,0.1);
+      transform: translateY(-1px);
+    }
+    .popular-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .popular-q {
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--ink); line-height: 1.4;
+    }
+    .popular-cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; color: var(--muted);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* CATEGORIES */
+    .categories {
+      background: var(--navy);
+      padding: 4rem 2.5rem;
+      text-align: center;
+    }
+    .cat-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.5rem;
+      color: var(--white); margin-bottom: 2rem;
+    }
+    .cat-grid {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 0.75rem;
+      max-width: 700px; margin: 0 auto;
+    }
+    .cat-pill {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--soft); font-size: 0.85rem; font-weight: 600;
+      padding: 0.6rem 1.25rem; border-radius: 100px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .cat-pill:hover {
+      background: rgba(26,111,212,0.25);
+      border-color: var(--blue-light);
+      color: var(--white);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink);
+      padding: 2rem 2.5rem;
+      text-align: center;
+      border-top: 2px solid var(--gold);
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-size: 1.2rem;
+      color: var(--white); margin-bottom: 0.5rem;
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-note {
+      font-size: 0.72rem; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    @media(max-width:600px){
+      .popular-grid { grid-template-columns: 1fr; }
+      .search-btn span { display: none; }
+      nav { padding: 0 1rem; }
+      .hero { padding: 3rem 1.25rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">True<span>Facts</span>.com.au</div>
+  <div class="nav-tag">AI-Powered Answers</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Powered by Claude AI · Instant · Accurate</div>
+  <h1>Ask anything.<br>Get <em>real answers.</em></h1>
+  <p class="hero-sub">Type any question — science, history, health, law, culture, or anything else. Get a clear, accurate answer in seconds.</p>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <input
+        type="text"
+        class="search-input"
+        id="questionInput"
+        placeholder="What would you like to know?"
+        autocomplete="off"
+      />
+      <button class="search-btn" id="askBtn" onclick="askQuestion()">
+        <span>Get Answer</span> →
+      </button>
+    </div>
+    <div class="suggestions">
+      <div class="suggestion-pill" onclick="fillAndAsk('Why is the sky blue?')">Why is the sky blue?</div>
+      <div class="suggestion-pill" onclick="fillAndAsk('How does the human heart work?')">How does the heart work?</div>
+      <div class="suggestion-pill" onclick="fillAndAsk('What caused World War 1?')">What caused WW1?</div>
+      <div class="suggestion-pill" onclick="fillAndAsk('How does AI work?')">How does AI work?</div>
+      <div class="suggestion-pill" onclick="fillAndAsk('What is climate change?')">What is climate change?</div>
+    </div>
+  </div>
+</div>
+
+<!-- ANSWER -->
+<div class="answer-section" id="answerSection">
+  <div class="answer-card">
+    <div class="answer-header">
+      <div class="answer-question" id="answerQuestion"></div>
+      <div class="answer-badge">✓ Verified Answer</div>
+    </div>
+    <div class="loading-wrap" id="loadingWrap">
+      <div class="loading-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="loading-text">Finding the answer...</div>
+    </div>
+    <div class="answer-body" id="answerBody" style="display:none;">
+      <div class="answer-text" id="answerText"></div>
+    </div>
+    <div class="answer-footer" id="answerFooter" style="display:none;">
+      <div class="answer-meta" id="answerMeta"></div>
+      <button class="ask-again-btn" onclick="focusSearch()">Ask another question</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPULAR -->
+<div class="popular" id="popularSection">
+  <div class="popular-title">Popular Questions</div>
+  <div class="popular-grid">
+    <div class="popular-item" onclick="fillAndAsk('How does the human brain store memories?')">
+      <div class="popular-icon">🧠</div>
+      <div><div class="popular-q">How does the human brain store memories?</div><div class="popular-cat">Science</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('What is the difference between a virus and bacteria?')">
+      <div class="popular-icon">🦠</div>
+      <div><div class="popular-q">What is the difference between a virus and bacteria?</div><div class="popular-cat">Health</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('How does compound interest work?')">
+      <div class="popular-icon">💰</div>
+      <div><div class="popular-q">How does compound interest work?</div><div class="popular-cat">Finance</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('What are the causes of climate change?')">
+      <div class="popular-icon">🌍</div>
+      <div><div class="popular-q">What are the causes of climate change?</div><div class="popular-cat">Environment</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('How does the stock market work?')">
+      <div class="popular-icon">📈</div>
+      <div><div class="popular-q">How does the stock market work?</div><div class="popular-cat">Finance</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('What is quantum physics in simple terms?')">
+      <div class="popular-icon">⚛️</div>
+      <div><div class="popular-q">What is quantum physics in simple terms?</div><div class="popular-cat">Science</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('Why do we dream when we sleep?')">
+      <div class="popular-icon">💤</div>
+      <div><div class="popular-q">Why do we dream when we sleep?</div><div class="popular-cat">Health</div></div>
+    </div>
+    <div class="popular-item" onclick="fillAndAsk('How did the universe begin?')">
+      <div class="popular-icon">🌌</div>
+      <div><div class="popular-q">How did the universe begin?</div><div class="popular-cat">Science</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="categories">
+  <div class="cat-title">Browse by topic</div>
+  <div class="cat-grid">
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting science fact')">🔬 Science</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting history fact')">📜 History</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting health fact')">❤️ Health</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting technology fact')">💻 Technology</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting space fact')">🚀 Space</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting nature fact')">🌿 Nature</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting psychology fact')">🧠 Psychology</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting economics fact')">💹 Economics</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting geography fact')">🗺️ Geography</div>
+    <div class="cat-pill" onclick="fillAndAsk('Tell me an interesting law fact')">⚖️ Law</div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">True<span>Facts</span>.com.au</div>
+  <div class="footer-note">© 2025 TrueFacts · AI-powered answers · truefacts.com.au</div>
+</footer>
+
+<script>
+  // API handled securely via Cloudflare Worker
+
+  const input = document.getElementById('questionInput');
+  const answerSection = document.getElementById('answerSection');
+  const answerQuestion = document.getElementById('answerQuestion');
+  const loadingWrap = document.getElementById('loadingWrap');
+  const answerBody = document.getElementById('answerBody');
+  const answerText = document.getElementById('answerText');
+  const answerFooter = document.getElementById('answerFooter');
+  const answerMeta = document.getElementById('answerMeta');
+  const askBtn = document.getElementById('askBtn');
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') askQuestion();
+  });
+
+  function fillAndAsk(q) {
+    input.value = q;
+    askQuestion();
+  }
+
+  function focusSearch() {
+    input.focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function askQuestion() {
+    const question = input.value.trim();
+    if (!question) return;
+
+    // Show answer section
+    answerSection.classList.add('visible');
+    answerQuestion.textContent = question;
+    loadingWrap.classList.add('visible');
+    loadingWrap.style.display = 'block';
+    answerBody.style.display = 'none';
+    answerFooter.style.display = 'none';
+    askBtn.disabled = true;
+
+    // Scroll to answer
+    setTimeout(() => answerSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    const startTime = Date.now();
+
+    try {
+      const response = await fetch('https://truefacts-api.lavanya-thavaraja.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+      if (data.content && data.content[0]) {
+        const raw = data.content[0].text;
+
+        // Simple markdown to HTML
+        const html = raw
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+          .replace(/^## (.*$)/gm, '<h3>$1</h3>')
+          .replace(/^- (.*$)/gm, '<li>$1</li>')
+          .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+          .split('\n\n')
+          .filter(p => p.trim())
+          .map(p => p.startsWith('<') ? p : `<p>${p.replace(/\n/g, ' ')}</p>`)
+          .join('');
+
+        loadingWrap.style.display = 'none';
+        answerBody.style.display = 'block';
+        answerText.innerHTML = html;
+        answerFooter.style.display = 'flex';
+        answerMeta.textContent = `Answered in ${elapsed}s · truefacts.com.au`;
+      } else {
+        showError('Could not get an answer. Please try again.');
+      }
+    } catch (err) {
+      showError('Connection error. Please check your internet and try again.');
+    }
+
+    askBtn.disabled = false;
+  }
+
+  function showError(msg) {
+    loadingWrap.style.display = 'none';
+    answerBody.style.display = 'block';
+    answerText.innerHTML = `<p style="color:#E53E3E;">${msg}</p>`;
+    answerFooter.style.display = 'flex';
+    askBtn.disabled = false;
+  }
+</script>
+</body>
+</html>
